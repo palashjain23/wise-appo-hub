@@ -1,9 +1,4 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import { Clock } from "lucide-react";
 
 interface DayAvailability {
@@ -35,24 +30,25 @@ const AvailabilityManager = () => {
   };
 
   return (
-    <Card className="border-2 shadow-lg">
-      <CardHeader>
-        <CardTitle>Manage Weekly Availability</CardTitle>
-        <CardDescription>Set your working hours for each day of the week</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div className="border border-border rounded-lg p-6 shadow-md">
+      <h3 className="text-xl font-semibold mb-2">Manage Weekly Availability</h3>
+      <p className="text-muted-foreground text-sm mb-6">Set your working hours for each day</p>
+      
+      <div className="space-y-3 mb-6">
         {availability.map((day, index) => (
           <div 
             key={day.day}
-            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border-2 hover:shadow-md transition-all"
+            className="flex items-center justify-between p-4 border border-border rounded-lg hover:shadow-sm transition-shadow"
           >
             <div className="flex items-center gap-4 flex-1">
-              <Switch
+              <input
+                type="checkbox"
                 checked={day.enabled}
-                onCheckedChange={() => toggleDay(index)}
+                onChange={() => toggleDay(index)}
+                className="w-4 h-4 accent-primary cursor-pointer"
               />
               <div className="flex-1">
-                <Label className="text-base font-semibold">{day.day}</Label>
+                <p className="font-semibold">{day.day}</p>
                 {day.enabled && (
                   <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
                     <Clock className="w-3 h-3" />
@@ -61,25 +57,24 @@ const AvailabilityManager = () => {
                 )}
               </div>
             </div>
-            <Badge 
-              variant="outline" 
-              className={day.enabled 
-                ? "bg-success/10 text-success border-success/20" 
+            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+              day.enabled 
+                ? "bg-success/10 text-success" 
                 : "bg-muted text-muted-foreground"
-              }
-            >
+            }`}>
               {day.enabled ? "Available" : "Unavailable"}
-            </Badge>
+            </span>
           </div>
         ))}
-        
-        <div className="pt-4">
-          <Button onClick={handleSave} variant="hero" size="lg" className="w-full">
-            Save Availability
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+      </div>
+      
+      <button 
+        onClick={handleSave} 
+        className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+      >
+        Save Availability
+      </button>
+    </div>
   );
 };
 

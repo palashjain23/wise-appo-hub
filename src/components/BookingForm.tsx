@@ -1,14 +1,4 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 
 interface BookingFormProps {
   onSubmit: (data: any) => void;
@@ -28,7 +18,7 @@ const timeSlots = [
 ];
 
 const BookingForm = ({ onSubmit }: BookingFormProps) => {
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState("");
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
 
@@ -43,93 +33,72 @@ const BookingForm = ({ onSubmit }: BookingFormProps) => {
     onSubmit({
       doctorName: doctor?.name,
       specialty: doctor?.specialty,
-      date: format(date, "yyyy-MM-dd"),
+      date: date,
       time: selectedTime
     });
 
-    // Reset form
-    setDate(undefined);
+    setDate("");
     setSelectedDoctor("");
     setSelectedTime("");
   };
 
   return (
-    <Card className="border-2 shadow-lg">
-      <CardHeader>
-        <CardTitle>Book New Appointment</CardTitle>
-        <CardDescription>Select a doctor, date, and time for your appointment</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Doctor Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="doctor">Select Doctor</Label>
-            <Select value={selectedDoctor} onValueChange={setSelectedDoctor}>
-              <SelectTrigger id="doctor">
-                <SelectValue placeholder="Choose a doctor" />
-              </SelectTrigger>
-              <SelectContent>
-                {doctors.map((doctor) => (
-                  <SelectItem key={doctor.id} value={doctor.id}>
-                    {doctor.name} - {doctor.specialty}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+    <div className="border border-border rounded-lg p-6 shadow-md">
+      <h3 className="text-xl font-semibold mb-2">Book New Appointment</h3>
+      <p className="text-muted-foreground text-sm mb-6">Select a doctor, date, and time</p>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-2">Select Doctor</label>
+          <select 
+            value={selectedDoctor} 
+            onChange={(e) => setSelectedDoctor(e.target.value)}
+            className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <option value="">Choose a doctor</option>
+            {doctors.map((doctor) => (
+              <option key={doctor.id} value={doctor.id}>
+                {doctor.name} - {doctor.specialty}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          {/* Date Selection */}
-          <div className="space-y-2">
-            <Label>Select Date</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : "Pick a date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  disabled={(date) => date < new Date()}
-                  initialFocus
-                  className="pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+        <div>
+          <label className="block text-sm font-medium mb-2">Select Date</label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            min={new Date().toISOString().split('T')[0]}
+            className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
 
-          {/* Time Selection */}
-          <div className="space-y-2">
-            <Label htmlFor="time">Select Time</Label>
-            <Select value={selectedTime} onValueChange={setSelectedTime}>
-              <SelectTrigger id="time">
-                <SelectValue placeholder="Choose a time slot" />
-              </SelectTrigger>
-              <SelectContent>
-                {timeSlots.map((slot) => (
-                  <SelectItem key={slot} value={slot}>
-                    {slot}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <div>
+          <label className="block text-sm font-medium mb-2">Select Time</label>
+          <select 
+            value={selectedTime} 
+            onChange={(e) => setSelectedTime(e.target.value)}
+            className="w-full px-3 py-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+          >
+            <option value="">Choose a time slot</option>
+            {timeSlots.map((slot) => (
+              <option key={slot} value={slot}>
+                {slot}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          <Button type="submit" variant="hero" size="lg" className="w-full">
-            Confirm Booking
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+        <button 
+          type="submit" 
+          className="w-full px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+        >
+          Confirm Booking
+        </button>
+      </form>
+    </div>
   );
 };
 
